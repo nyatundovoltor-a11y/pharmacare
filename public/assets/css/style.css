@@ -1,0 +1,525 @@
+/* ==========================================================================
+   PharmaCare Design System
+   A dispensing-chart aesthetic: hairline rules, tabbed sidebar like a
+   patient-chart index, monospaced numerals everywhere data appears.
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root {
+    --color-primary: #1B4B66;
+    --color-primary-dim: #163e56;
+    --color-accent: #2E86AB;
+    --color-success: #2FA88A;
+    --color-warning: #D98E04;
+    --color-danger: #C1443C;
+    --bg: #F6F9FB;
+    --bg-panel: #FFFFFF;
+    --text: #17293A;
+    --text-muted: #5C7288;
+    --border: #DCE6EC;
+    --border-strong: #C4D3DC;
+
+    --font-heading: 'Sora', sans-serif;
+    --font-body: 'IBM Plex Sans', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+
+    --sidebar-w: 236px;
+    --topbar-h: 64px;
+    --radius: 6px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+    font-family: var(--font-heading);
+    color: var(--color-primary);
+    margin: 0 0 4px;
+    letter-spacing: -0.01em;
+}
+
+a { color: var(--color-accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Anything that's a number, code, date, or currency reads like a lab printout */
+.mono, .data, td.num, .stat-value, .receipt, .req-code, code {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+}
+
+:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------------
+   Auth screen (no sidebar)
+   --------------------------------------------------------------------- */
+.auth-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+        linear-gradient(180deg, var(--color-primary) 0%, var(--color-primary-dim) 100%);
+    padding: 20px;
+}
+
+.auth-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    width: 100%;
+    max-width: 380px;
+    padding: 36px 32px 32px;
+    box-shadow: 0 1px 2px rgba(23, 41, 58, 0.06);
+}
+
+.auth-brand {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.auth-brand .rx {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--color-accent);
+}
+
+.auth-brand .name {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--color-primary);
+}
+
+.auth-sub {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-bottom: 28px;
+}
+
+/* ---------------------------------------------------------------------
+   App shell: sidebar + topbar
+   --------------------------------------------------------------------- */
+.app-shell {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: var(--sidebar-w);
+    flex-shrink: 0;
+    background: var(--color-primary);
+    color: #DCEAF2;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+}
+
+.sidebar-brand {
+    padding: 22px 20px 18px;
+    display: flex;
+    align-items: baseline;
+    gap: 7px;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+
+.sidebar-brand .rx {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    color: #6FC3E8;
+    font-size: 19px;
+}
+
+.sidebar-brand .name {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 17px;
+    color: #fff;
+}
+
+.sidebar-nav {
+    flex: 1;
+    padding: 14px 0;
+    overflow-y: auto;
+}
+
+.sidebar-section-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #7FA3B8;
+    padding: 14px 20px 6px;
+}
+
+/* Each nav item carries its own colored rule, like an indexed chart tab */
+.nav-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px 10px 17px;
+    color: #C9DEE9;
+    font-size: 13.5px;
+    font-weight: 500;
+    border-left: 3px solid transparent;
+    transition: background-color 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+}
+
+.nav-item:hover {
+    background: rgba(255,255,255,0.06);
+    color: #fff;
+    text-decoration: none;
+}
+
+.nav-item.active {
+    background: rgba(255,255,255,0.09);
+    color: #fff;
+}
+
+.nav-item .tab-rule {
+    position: absolute;
+    left: -3px; top: 6px; bottom: 6px;
+    width: 3px;
+    border-radius: 0 2px 2px 0;
+}
+
+.nav-item .icon { font-size: 15px; width: 18px; text-align: center; }
+
+.sidebar-user {
+    border-top: 1px solid rgba(255,255,255,0.12);
+    padding: 14px 20px;
+    font-size: 12.5px;
+}
+
+.sidebar-user .who { color: #fff; font-weight: 600; margin-bottom: 1px; }
+.sidebar-user .role-tag {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #9FC6DB;
+    margin-bottom: 10px;
+}
+.sidebar-user .logout-link {
+    color: #F3B8B3;
+    font-size: 12.5px;
+}
+
+.main-col {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.topbar {
+    height: var(--topbar-h);
+    background: var(--bg-panel);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+}
+
+.topbar .page-title {
+    font-family: var(--font-heading);
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+.topbar .page-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 2px;
+}
+
+.content {
+    padding: 26px 28px 60px;
+    max-width: 1180px;
+    width: 100%;
+}
+
+/* ---------------------------------------------------------------------
+   Cards - hairline borders, no heavy shadow
+   --------------------------------------------------------------------- */
+.card {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    margin-bottom: 20px;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+}
+
+.card-header h2, .card-header h3 { margin: 0; font-size: 15px; }
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 16px;
+}
+
+/* Stat cards on the dashboard - labeled like chart readouts */
+.stat-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--color-accent);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+}
+
+.stat-card.accent-success { border-left-color: var(--color-success); }
+.stat-card.accent-warning { border-left-color: var(--color-warning); }
+.stat-card.accent-danger { border-left-color: var(--color-danger); }
+.stat-card.accent-primary { border-left-color: var(--color-primary); }
+
+.stat-label {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+}
+
+.stat-value {
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+/* ---------------------------------------------------------------------
+   Tables - the dispensing-chart signature
+   --------------------------------------------------------------------- */
+table.chart-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+table.chart-table thead th {
+    text-align: left;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 500;
+    padding: 0 10px 10px;
+    border-bottom: 1px solid var(--border-strong);
+}
+
+table.chart-table td {
+    padding: 11px 10px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+}
+
+table.chart-table td.num,
+table.chart-table td.code {
+    font-family: var(--font-mono);
+    color: var(--text);
+}
+
+table.chart-table tbody tr:hover { background: #F0F6F9; }
+table.chart-table tbody tr:last-child td { border-bottom: none; }
+
+/* ---------------------------------------------------------------------
+   Status pills - look like small dispensing labels
+   --------------------------------------------------------------------- */
+.pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 3px;
+    border: 1px solid transparent;
+    white-space: nowrap;
+}
+
+.pill::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.pill-success { background: #E7F6F1; color: var(--color-success); border-color: #BFE9DC; }
+.pill-warning { background: #FCF1DD; color: var(--color-warning); border-color: #F3D99B; }
+.pill-danger  { background: #FBEAE9; color: var(--color-danger); border-color: #EFC2BF; }
+.pill-neutral { background: #EDF2F5; color: var(--text-muted); border-color: var(--border-strong); }
+.pill-accent  { background: #E5F1F7; color: var(--color-accent); border-color: #BEDCE9; }
+
+/* ---------------------------------------------------------------------
+   Forms
+   --------------------------------------------------------------------- */
+.form-group { margin-bottom: 16px; }
+
+.form-group label {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+}
+
+.form-group .hint {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+select,
+textarea {
+    width: 100%;
+    font-family: var(--font-body);
+    font-size: 13.5px;
+    color: var(--text);
+    background: var(--bg-panel);
+    border: 1px solid var(--border-strong);
+    border-radius: 4px;
+    padding: 9px 11px;
+}
+
+input[type="number"] { font-family: var(--font-mono); }
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(46, 134, 171, 0.14);
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-body);
+    font-size: 13.5px;
+    font-weight: 600;
+    padding: 9px 16px;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    text-decoration: none !important;
+}
+
+.btn-primary { background: var(--color-accent); color: #fff; }
+.btn-primary:hover { background: #26739216; background: #256f92; }
+.btn-outline { background: transparent; border-color: var(--border-strong); color: var(--text); }
+.btn-outline:hover { border-color: var(--color-accent); color: var(--color-accent); }
+.btn-success { background: var(--color-success); color: #fff; }
+.btn-danger  { background: var(--color-danger); color: #fff; }
+.btn-sm { padding: 5px 10px; font-size: 12px; }
+.btn[disabled] { opacity: 0.5; cursor: not-allowed; }
+
+/* ---------------------------------------------------------------------
+   Alerts / flash messages
+   --------------------------------------------------------------------- */
+.alert {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--color-accent);
+    border-radius: 4px;
+    padding: 11px 14px;
+    font-size: 13px;
+    margin-bottom: 16px;
+    background: #EFF6FA;
+}
+.alert-success { border-left-color: var(--color-success); background: #EAF7F3; color: #1D6E58; }
+.alert-error   { border-left-color: var(--color-danger); background: #FCEEED; color: #8F2E28; }
+
+/* ---------------------------------------------------------------------
+   Empty states
+   --------------------------------------------------------------------- */
+.empty-state {
+    text-align: center;
+    padding: 48px 20px;
+    color: var(--text-muted);
+}
+.empty-state .glyph { font-size: 28px; margin-bottom: 10px; color: var(--border-strong); }
+
+/* ---------------------------------------------------------------------
+   Receipt - styled like a thermal pharmacy printout
+   --------------------------------------------------------------------- */
+.receipt {
+    max-width: 380px;
+    margin: 0 auto;
+    background: #fff;
+    border: 1px solid var(--border);
+    padding: 26px 24px;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--text);
+}
+.receipt .r-head { text-align: center; margin-bottom: 14px; }
+.receipt .r-head .brand { font-family: var(--font-heading); font-weight: 700; color: var(--color-primary); font-size: 16px; }
+.receipt .r-head .sub { color: var(--text-muted); font-size: 11px; margin-top: 2px; }
+.receipt .r-divider { border-top: 1px dashed var(--border-strong); margin: 12px 0; }
+.receipt .r-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
+.receipt .r-row.total { font-weight: 600; font-size: 14px; color: var(--color-primary); margin-top: 6px; }
+.receipt .r-foot { text-align: center; color: var(--text-muted); font-size: 10.5px; margin-top: 16px; letter-spacing: 0.04em; }
+
+@media print {
+    .sidebar, .topbar, .no-print { display: none !important; }
+    .main-col { margin-left: 0 !important; }
+}
+
+/* ---------------------------------------------------------------------
+   Responsive
+   --------------------------------------------------------------------- */
+@media (max-width: 860px) {
+    :root { --sidebar-w: 0px; }
+    .sidebar { display: none; }
+    .main-col { margin-left: 0; }
+    .form-row { grid-template-columns: 1fr; }
+}
